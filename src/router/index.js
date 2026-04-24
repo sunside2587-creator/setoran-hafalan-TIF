@@ -3,6 +3,7 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import StudentDetailView from '../views/StudentDetailView.vue'
+import StudentActivityView from '../views/StudentActivityView.vue'
 import { getAccessToken } from '../services/session'
 
 const router = createRouter({
@@ -24,6 +25,12 @@ const router = createRouter({
       path: '/mahasiswa/:nim',
       name: 'student-detail',
       component: StudentDetailView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/mahasiswa/:nim/riwayat',
+      name: 'student-activity',
+      component: StudentActivityView,
       meta: { requiresAuth: true }
     },
     {

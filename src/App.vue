@@ -19,21 +19,59 @@
       <RouterView />
     </main>
 
-    <nav v-if="isAuthenticated" class="mobile-bottom-nav d-md-none">
-      <RouterLink to="/" class="mobile-bottom-link" :class="{ active: route.name === 'dashboard' }">
-        <span class="mobile-bottom-icon">DB</span>
-        <span>Dashboard</span>
-      </RouterLink>
-      <button class="mobile-bottom-link border-0 bg-transparent" @click="handleLogout">
-        <span class="mobile-bottom-icon">OUT</span>
-        <span>Logout</span>
-      </button>
-    </nav>
+    <button
+      v-if="showMobileHamburger"
+      type="button"
+      class="mobile-hamburger-btn d-md-none"
+      :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
+      aria-label="Buka menu navigasi"
+      @click="toggleMobileMenu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <Transition name="mobile-menu-fade">
+      <div
+        v-if="isAuthenticated && isMobileMenuOpen"
+        class="mobile-menu-backdrop d-md-none"
+        @click="closeMobileMenu"
+      ></div>
+    </Transition>
+
+    <Transition name="mobile-menu-slide">
+      <nav v-if="isAuthenticated && isMobileMenuOpen" class="mobile-drawer-nav d-md-none">
+        <div class="mobile-drawer-header">
+          <div>
+            <p class="section-eyebrow mb-2">Menu</p>
+            <h2 class="h5 fw-bold mb-0">Navigasi cepat</h2>
+          </div>
+          <button type="button" class="mobile-drawer-close" @click="closeMobileMenu" aria-label="Tutup menu">
+            ×
+          </button>
+        </div>
+
+        <div class="mobile-drawer-links">
+          <RouterLink
+            to="/"
+            class="mobile-drawer-link"
+            :class="{ active: route.name === 'dashboard' }"
+            @click="closeMobileMenu"
+          >
+            Dashboard
+          </RouterLink>
+          <button class="mobile-drawer-link mobile-drawer-link-button" @click="handleLogout">
+            Logout
+          </button>
+        </div>
+      </nav>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { clearSession, useSessionState } from './services/session'
 
@@ -41,9 +79,74 @@ const router = useRouter()
 const route = useRoute()
 const session = useSessionState()
 const isAuthenticated = computed(() => Boolean(session.value?.access_token))
+const isMobileMenuOpen = ref(false)
+const showMobileHamburger = ref(false)
+
+let lastScrollY = 0
+
+function syncHamburgerVisibility() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const isMobileViewport = window.innerWidth < 768
+
+  if (!isAuthenticated.value || !isMobileViewport) {
+    showMobileHamburger.value = false
+    isMobileMenuOpen.value = false
+    return
+  }
+
+  const currentScrollY = window.scrollY
+  const scrollingUp = currentScrollY < lastScrollY
+  showMobileHamburger.value = currentScrollY <= 24 || scrollingUp || isMobileMenuOpen.value
+  lastScrollY = currentScrollY
+}
+
+function handleScroll() {
+  syncHamburgerVisibility()
+}
+
+function handleResize() {
+  syncHamburgerVisibility()
+}
+
+function toggleMobileMenu() {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+  syncHamburgerVisibility()
+}
+
+function closeMobileMenu() {
+  isMobileMenuOpen.value = false
+  syncHamburgerVisibility()
+}
 
 function handleLogout() {
+  closeMobileMenu()
   clearSession()
   router.push({ name: 'login' })
 }
+
+watch(
+  () => route.fullPath,
+  () => {
+    closeMobileMenu()
+  }
+)
+
+watch(isAuthenticated, () => {
+  syncHamburgerVisibility()
+})
+
+onMounted(() => {
+  lastScrollY = window.scrollY
+  syncHamburgerVisibility()
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('resize', handleResize, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', handleResize)
+})
 </script>

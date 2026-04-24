@@ -3,7 +3,7 @@
     <section class="hero-panel rounded-4 p-4 p-lg-5 text-white">
       <div class="row align-items-center g-4">
         <div class="col-lg-8">
-          <p class="text-uppercase small fw-semibold mb-2 opacity-75">Dashboard Dosen PA</p>
+          <p class="text-uppercase small fw-semibold mb-2 opacity-75">Dosen PA</p>
           <h2 class="display-6 fw-bold mb-3">Pantau progres setoran hafalan mahasiswa dalam satu panel.</h2>
           <p class="mb-0 opacity-75">
             Cari mahasiswa, lihat progres, lalu buka halaman detail untuk memvalidasi atau membatalkan setoran hafalan.
@@ -178,52 +178,52 @@
               </div>
 
               <div class="table-responsive d-none d-md-block">
-              <table class="table align-middle">
-                <thead>
-                  <tr>
-                    <th>Mahasiswa</th>
-                    <th>Angkatan</th>
-                    <th>Semester</th>
-                    <th>Progres</th>
-                    <th>Terakhir setor</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="mahasiswa in filteredMahasiswa" :key="mahasiswa.nim">
-                    <td>
-                      <div class="fw-semibold">{{ mahasiswa.nama }}</div>
-                      <div class="text-secondary small">{{ mahasiswa.nim }}</div>
-                      <div class="text-secondary small">{{ mahasiswa.email }}</div>
-                    </td>
-                    <td>{{ mahasiswa.angkatan }}</td>
-                    <td>{{ mahasiswa.semester }}</td>
-                    <td style="min-width: 180px;">
-                      <div class="d-flex justify-content-between small mb-1">
-                        <span>{{ mahasiswa.info_setoran.total_sudah_setor }}/{{ mahasiswa.info_setoran.total_wajib_setor }}</span>
-                        <span>{{ mahasiswa.info_setoran.persentase_progres_setor }}%</span>
-                      </div>
-                      <div class="progress" role="progressbar">
-                        <div
-                          class="progress-bar"
-                          :class="`bg-${progressVariant(mahasiswa.info_setoran.persentase_progres_setor)}`"
-                          :style="{ width: `${mahasiswa.info_setoran.persentase_progres_setor}%` }"
-                        ></div>
-                      </div>
-                    </td>
-                    <td>{{ mahasiswa.info_setoran.terakhir_setor }}</td>
-                    <td class="text-end">
-                      <RouterLink
-                        :to="{ name: 'student-detail', params: { nim: mahasiswa.nim } }"
-                        class="btn btn-outline-primary btn-sm"
-                      >
-                        Detail
-                      </RouterLink>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Mahasiswa</th>
+                      <th>Angkatan</th>
+                      <th>Semester</th>
+                      <th>Progres</th>
+                      <th>Terakhir setor</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="mahasiswa in filteredMahasiswa" :key="mahasiswa.nim">
+                      <td>
+                        <div class="fw-semibold">{{ mahasiswa.nama }}</div>
+                        <div class="text-secondary small">{{ mahasiswa.nim }}</div>
+                        <div class="text-secondary small">{{ mahasiswa.email }}</div>
+                      </td>
+                      <td>{{ mahasiswa.angkatan }}</td>
+                      <td>{{ mahasiswa.semester }}</td>
+                      <td style="min-width: 180px;">
+                        <div class="d-flex justify-content-between small mb-1">
+                          <span>{{ mahasiswa.info_setoran.total_sudah_setor }}/{{ mahasiswa.info_setoran.total_wajib_setor }}</span>
+                          <span>{{ mahasiswa.info_setoran.persentase_progres_setor }}%</span>
+                        </div>
+                        <div class="progress" role="progressbar">
+                          <div
+                            class="progress-bar"
+                            :class="`bg-${progressVariant(mahasiswa.info_setoran.persentase_progres_setor)}`"
+                            :style="{ width: `${mahasiswa.info_setoran.persentase_progres_setor}%` }"
+                          ></div>
+                        </div>
+                      </td>
+                      <td>{{ mahasiswa.info_setoran.terakhir_setor }}</td>
+                      <td class="text-end">
+                        <RouterLink
+                          :to="{ name: 'student-detail', params: { nim: mahasiswa.nim } }"
+                          class="btn btn-outline-primary btn-sm"
+                        >
+                          Detail
+                        </RouterLink>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </BaseCard>
         </div>

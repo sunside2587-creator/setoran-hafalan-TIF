@@ -1,18 +1,27 @@
 <template>
-  <div class="d-grid gap-4">
-    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
-      <div>
-        <RouterLink :to="{ name: 'dashboard' }" class="btn btn-link text-decoration-none px-0">
+  <div class="student-detail-page d-grid gap-4">
+    <section class="student-overview-card">
+      <div class="student-overview-main">
+        <RouterLink :to="{ name: 'dashboard' }" class="student-back-link">
           &larr; Kembali ke dashboard
         </RouterLink>
-        <h2 class="h3 fw-bold mb-1">{{ studentInfo?.nama || 'Detail Mahasiswa' }}</h2>
-        <p class="text-secondary mb-0">{{ studentInfo?.nim }} - {{ studentInfo?.email }}</p>
+        <div class="student-overview-copy">
+          <h2 class="h3 fw-bold mb-2">{{ studentInfo?.nama || 'Detail Mahasiswa' }}</h2>
+          <p class="text-secondary mb-3">{{ studentInfo?.nim }} - {{ studentInfo?.email }}</p>
+          <div class="student-meta-chips">
+            <span class="student-meta-chip">Angkatan {{ studentInfo?.angkatan || '-' }}</span>
+            <span class="student-meta-chip">Semester {{ studentInfo?.semester || '-' }}</span>
+            <span class="student-meta-chip">PA {{ studentInfo?.dosen_pa?.nama || '-' }}</span>
+          </div>
+        </div>
       </div>
 
-      <button class="btn btn-outline-primary w-100 student-refresh-btn" @click="loadDetail" :disabled="isLoading">
-        {{ isLoading ? 'Memuat...' : 'Refresh data' }}
-      </button>
-    </div>
+      <div class="student-overview-actions">
+        <button class="btn btn-outline-primary student-refresh-btn" @click="loadDetail" :disabled="isLoading">
+          {{ isLoading ? 'Memuat...' : 'Refresh' }}
+        </button>
+      </div>
+    </section>
 
     <div v-if="errorMessage" class="alert alert-danger mb-0">{{ errorMessage }}</div>
     <div v-if="successMessage" class="alert alert-success mb-0">{{ successMessage }}</div>
@@ -53,71 +62,62 @@
         </div>
         <div class="col-md-6 col-xl-3">
           <StatCard
-            label="Semester"
-            :value="studentInfo.semester"
-            help="Semester aktif mahasiswa"
-            :badge="`Angkatan ${studentInfo.angkatan}`"
+            label="Total Wajib"
+            :value="setoranInfo.total_wajib_setor"
+            help="Jumlah komponen hafalan"
+            badge="Target"
             variant="warning"
           />
         </div>
       </section>
 
-      <section class="row g-3">
-        <div class="col-xl-4">
-          <BaseCard>
-            <h3 class="h5 fw-bold mb-3">Ringkasan kategori</h3>
-            <div class="d-grid gap-3">
-              <div
-                v-for="item in detail.data.setoran.ringkasan"
-                :key="item.label"
-                class="rounded-3 border p-3"
-              >
-                <div class="d-flex justify-content-between gap-3 mb-2">
-                  <strong>{{ item.label }}</strong>
-                  <span>{{ item.persentase_progres_setor }}%</span>
-                </div>
-                <div class="progress mb-2" role="progressbar">
-                  <div
-                    class="progress-bar"
-                    :class="`bg-${progressVariant(item.persentase_progres_setor)}`"
-                    :style="{ width: `${item.persentase_progres_setor}%` }"
-                  ></div>
-                </div>
-                <p class="text-secondary small mb-0">
-                  {{ item.total_sudah_setor }} dari {{ item.total_wajib_setor }} komponen sudah disetor.
-                </p>
-              </div>
+       <section>
+        <BaseCard>
+          <div class="activity-cta-card">
+            <div>
+              <p class="section-eyebrow mb-2">Riwayat Aktivitas</p>
+              <h3 class="h5 fw-bold mb-1">Lihat semua aktivitas mahasiswa</h3>
+              <p class="text-secondary mb-0">
+                Riwayat validasi dan pembatalan setoran mahasiswa.
+              </p>
             </div>
-          </BaseCard>
-        </div>
+            <RouterLink
+              :to="{ name: 'student-activity', params: { nim } }"
+              class="btn btn-outline-primary activity-cta-button"
+            >
+              Buka halaman aktivitas
+            </RouterLink>
+          </div>
+        </BaseCard>
+      </section>
 
-        <div class="col-xl-8">
+      <section class="row g-3 align-items-start">
+        <div class="col-12">
           <BaseCard>
-            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+            <div class="section-toolbar">
               <div>
+                <p class="section-eyebrow mb-2">Validation</p>
                 <h3 class="h5 fw-bold mb-1">Validasi setoran</h3>
-                <p class="text-secondary mb-0">Pilih komponen hafalan yang ingin disahkan.</p>
+                <p class="text-secondary mb-0">Pilih komponen hafalan yang ingin disahkan untuk mahasiswa ini.</p>
               </div>
-              <div class="text-secondary small align-self-center">
-                {{ selectedForSubmit.length }} komponen dipilih
+              <div class="selection-pill">
+                {{ selectedForSubmit.length }} dipilih
               </div>
             </div>
 
             <form class="d-grid gap-3" @submit.prevent="handleSubmitSetoran">
-              <div class="row g-3 align-items-end">
-                <div class="col-md-6">
+              <div class="validation-toolbar">
+                <div class="validation-date-field">
                   <label class="form-label">Tanggal setoran</label>
                   <input v-model="submitDate" type="date" class="form-control" />
                 </div>
-                <div class="col-md-6">
-                  <button
-                    type="submit"
-                    class="btn btn-primary w-100"
-                    :disabled="isSubmitting || !selectedForSubmit.length"
-                  >
-                    {{ isSubmitting ? 'Menyimpan...' : 'Simpan validasi setoran' }}
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary validation-submit-btn"
+                  :disabled="isSubmitting || !selectedForSubmit.length"
+                >
+                  {{ isSubmitting ? 'Menyimpan...' : 'Simpan validasi setoran' }}
+                </button>
               </div>
 
               <div class="d-grid gap-3">
@@ -149,8 +149,8 @@
                   />
                 </div>
 
-                <div class="table-responsive d-none d-md-block">
-                  <table class="table align-middle">
+                <div class="table-responsive d-none d-md-block setoran-table-shell">
+                  <table class="table align-middle mb-0">
                     <thead>
                       <tr>
                         <th style="width: 56px;"></th>
@@ -190,20 +190,21 @@
         </div>
       </section>
 
-      <section class="row g-3">
-        <div class="col-xl-7">
+      <section class="row g-3 align-items-start">
+        <div class="col-xl-12">
           <BaseCard>
-            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+            <div class="section-toolbar">
               <div>
+                <p class="section-eyebrow mb-2">Validated Items</p>
                 <h3 class="h5 fw-bold mb-1">Komponen yang sudah disetor</h3>
-                <p class="text-secondary mb-0">Pilih data yang ingin dibatalkan validasinya.</p>
+                <p class="text-secondary mb-0">Pilih data jika Anda ingin membatalkan validasi yang sudah tersimpan.</p>
               </div>
               <button
-                class="btn btn-outline-danger"
+                class="btn btn-outline-danger validation-submit-btn"
                 @click="handleDeleteSetoran"
                 :disabled="isDeleting || !selectedForDelete.length"
               >
-                {{ isDeleting ? 'Membatalkan...' : 'Batalkan validasi terpilih' }}
+                {{ isDeleting ? 'Membatalkan...' : 'Batalkan validasi' }}
               </button>
             </div>
 
@@ -245,8 +246,8 @@
                 />
               </div>
 
-              <div class="table-responsive d-none d-md-block">
-                <table class="table align-middle">
+              <div class="table-responsive d-none d-md-block setoran-table-shell">
+                <table class="table align-middle mb-0">
                   <thead>
                     <tr>
                       <th style="width: 56px;"></th>
@@ -288,25 +289,9 @@
             </div>
           </BaseCard>
         </div>
-
-        <div class="col-xl-5">
-          <BaseCard>
-            <h3 class="h5 fw-bold mb-3">Riwayat aktivitas</h3>
-            <div class="timeline">
-              <article v-for="log in detail.data.setoran.log" :key="log.id" class="timeline-item">
-                <div class="d-flex justify-content-between gap-3">
-                  <span :class="`badge text-bg-${log.aksi === 'VALIDASI' ? 'success' : 'danger'}`">
-                    {{ log.aksi }}
-                  </span>
-                  <span class="text-secondary small">{{ formatDateTime(log.timestamp) }}</span>
-                </div>
-                <p class="fw-semibold mt-2 mb-1">{{ log.keterangan }}</p>
-                <p class="text-secondary small mb-0">{{ log.dosen_yang_mengesahkan.nama }}</p>
-              </article>
-            </div>
-          </BaseCard>
-        </div>
       </section>
+
+     
     </template>
   </div>
 </template>
@@ -318,7 +303,7 @@ import BaseCard from '../components/BaseCard.vue'
 import EmptyState from '../components/EmptyState.vue'
 import StatCard from '../components/StatCard.vue'
 import { deleteSetoran, fetchMahasiswaSetoran, submitSetoran } from '../services/api'
-import { formatDate, formatDateTime, progressVariant } from '../utils/format'
+import { formatDate } from '../utils/format'
 
 const route = useRoute()
 const nim = computed(() => route.params.nim)
