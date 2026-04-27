@@ -76,7 +76,8 @@
           <div class="activity-cta-card">
             <div>
               <p class="section-eyebrow mb-2">Riwayat Aktivitas</p>
-              <h3 class="h5 fw-bold mb-1">Lihat semua aktivitas mahasiswa</h3>
+              <h3 class="h5 fw-bold mb-1">Lihat semua aktivitas </h3>
+              <h2 class="h3 fw-bold mb-1">{{ studentInfo?.nama || 'Mahasiswa' }}</h2>
               <p class="text-secondary mb-0">
                 Riwayat validasi dan pembatalan setoran mahasiswa.
               </p>
@@ -97,6 +98,7 @@
             <div class="section-toolbar">
               <div>
                 <p class="section-eyebrow mb-2">Validation</p>
+                
                 <h3 class="h5 fw-bold mb-1">Validasi setoran</h3>
                 <p class="text-secondary mb-0">Pilih komponen hafalan yang ingin disahkan untuk mahasiswa ini.</p>
               </div>
@@ -196,7 +198,10 @@
             <div class="section-toolbar">
               <div>
                 <p class="section-eyebrow mb-2">Validated Items</p>
+                
+
                 <h3 class="h5 fw-bold mb-1">Komponen yang sudah disetor</h3>
+                
                 <p class="text-secondary mb-0">Pilih data jika Anda ingin membatalkan validasi yang sudah tersimpan.</p>
               </div>
               <button

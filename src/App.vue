@@ -5,6 +5,7 @@
         <div>
           <RouterLink to="/" class="text-decoration-none app-brand">
             <h1 class="h4 mb-1 fw-bold brand-title">Setoran Hafalan</h1>
+            
           </RouterLink>
           <p class="text-secondary mb-0 small">Panel dosen pembimbing akademik untuk monitoring dan validasi hafalan.</p>
         </div>
